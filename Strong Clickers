@@ -1,0 +1,110 @@
+getgenv().autoTrain = false
+getgenv().autoHatch = false
+getgenv().autoSell = false
+getgenv().autoMass = false
+getgenv().autoRebirth = false
+getgenv().egg = ''
+
+local eggs = {
+    [1] = 'Basic',
+    [2] = 'Deadly',
+    [3] = 'Earthly',
+    [4] = 'Mountain',
+    [5] = 'Desert',
+    [6] = 'Winter',
+    [7] = 'Beach',
+    [8] = 'Ocean',
+}
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("Strong Clickers", "Serpent")
+local AutoTab = Window:NewTab("Auto")
+local Misc = Window:NewTab("Misc")
+local Keybind = Window:NewTab("Keybinds")
+
+local AutoTrain = AutoTab:NewSection("Auto Train")
+
+AutoTrain:NewToggle("", "Auto Trains", function(state)
+    autoTrain = state
+    spawn(function()
+        while autoTrain do
+            wait()
+              game:GetService("ReplicatedStorage").Remotes.TrainStrength:FireServer()
+        end
+    end)
+end)
+
+local AutoSell = AutoTab:NewSection("Auto Sell")
+
+AutoSell:NewToggle("", "Auto Sells", function(state)
+    autoSell = state
+    spawn(function()
+        while autoSell do 
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.TriggerAreas.Sell.Trigger, 0)
+            wait()
+            firetouchinterest(game.Players.LocalPlayer.Character.HumanoidRootPart, workspace.TriggerAreas.Sell.Trigger, 1)
+        end
+    end)
+end)
+
+local AutoRebirth = AutoTab:NewSection("Auto Rebirth")
+
+AutoRebirth:NewToggle("", "Auto Rebirths", function(state)
+    autoRebirth = state
+    spawn(function()
+        while autoRebirth do
+            wait()
+            game:GetService("ReplicatedStorage").Remotes.Rebirth:FireServer()
+        end
+    end)
+end)
+
+local AutoHatch = AutoTab:NewSection("Auto Hatch")
+
+AutoHatch:NewDropdown("Select Egg", "Select The Egg To Hatch", {unpack(eggs)}, function(currentOption)
+    egg = currentOption
+end)
+
+
+AutoHatch:NewToggle("", "Auto Hatches", function(state)
+    autoHatch = state
+    spawn(function()
+        while wait(0.5) do
+            if autoHatch then
+                local args = {[1] = egg.. " Egg"}
+                game:GetService("ReplicatedStorage").Remotes.HatchEgg:FireServer(unpack(args))
+            end
+        end
+    end)
+end)
+
+local AutoMass = AutoTab:NewSection("Auto Mass")
+
+AutoMass:NewToggle("", "Auto Upgrades BackPack", function(state)
+    autoMass = state
+    spawn(function()
+        while autoMass do
+            wait()
+            game:GetService("ReplicatedStorage").Remotes.BuffStrength:FireServer()
+        end
+    end)
+end)
+
+local Speed = Misc:NewSection("Speed Slider")
+
+getgenv().Sp = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed
+Speed:NewSlider("", "Changes Your Speed", 250, 16, function(s) -- 500 (MaxValue) | 0 (MinValue)
+    Sp = s
+end)
+spawn(function()
+    while wait() do
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Sp
+    end
+end)
+
+local Keybinds = Keybind:NewSection("Keybinds")
+
+Keybinds:NewKeybind("ToggleUI", "Hides & UnHides UI", Enum.KeyCode.F, function()
+    Library:ToggleUI()
+end)
